@@ -38,12 +38,14 @@ export default function Home() {
     const audio = new Audio("/audio/Blue.mp3");
     audio.play();
     audio.volume = 0.2;
+    audio.addEventListener("play", () => {
+      setPlayMusic(true);
+    });
     audio.addEventListener("ended", () => {
       setPlayMusic(false);
       setIsClicked(false);
       setLyricIndex(0);
     });
-    setPlayMusic(true);
   };
 
   const reset = () => {

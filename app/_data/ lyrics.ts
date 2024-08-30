@@ -72,8 +72,8 @@ const blue = [
         { word: "I'll", delay: 0.5, duration: 0.6 },
       ],
       [
-        { word: "pictures", delay: 0.8, duration: 0.7 },
-        { word: "us", delay: 1, duration: 0.8 },
+        { word: "picture", delay: 0.8, duration: 0.7 },
+        { word: "us,", delay: 1, duration: 0.8 },
       ],
       [
         { word: "you", delay: 2.05, duration: 0.6 },

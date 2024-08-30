@@ -86,7 +86,9 @@ export default function Home() {
 
         {!isClicked && (
           <div>
-            <h1 className="text-5xl font-bold text-center">Do you know?</h1>
+            <h1 className="text-3xl md:text-5xl font-bold text-center">
+              Did you know?
+            </h1>
           </div>
         )}
 

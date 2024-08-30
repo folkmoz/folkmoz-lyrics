@@ -1,0 +1,164 @@
+"use client";
+
+import { Divide } from "lucide-react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
+
+export default function GradientCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [pointCount] = useState(5);
+
+  const colors = useMemo(() => {
+    return [
+      { r: 255, g: 0, b: 153 },
+      { r: 73, g: 50, b: 64 },
+      { r: 28, g: 28, b: 28 },
+      { r: 224, g: 195, b: 252 },
+      { r: 142, g: 197, b: 252 },
+      { r: 5, g: 117, b: 230 },
+      { r: 0, g: 0, b: 70 },
+      { r: 0, g: 198, b: 255 },
+    ];
+  }, []);
+
+  const resizeCanvas = () => {
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const audio = audioRef.current;
+    const ctx = canvas.getContext("2d");
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioCtx.createAnalyser();
+    const source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    let points = [] as Point[];
+
+    class Point {
+      x: number;
+      y: number;
+      dx: number;
+      dy: number;
+
+      color: { r: number; g: number; b: number };
+      targetColor: { r: number; g: number; b: number };
+      colorChangeSpeed: number;
+      size: number;
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.dx = (Math.random() - 0.5) * 1.5; // Speed of movement
+        this.dy = (Math.random() - 0.5) * 1.5; // Speed of movement
+        this.color = this.randomColor();
+        this.targetColor = this.randomColor();
+        this.colorChangeSpeed = 0.01; // Speed of color change
+        this.size = Math.random() * 50 + 50;
+      }
+
+      randomColor() {
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      move() {
+        this.x += this.dx;
+        this.y += this.dy;
+
+        if (this.x < 0 || this.x > canvas.width) this.dx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.dy *= -1;
+      }
+
+      draw() {
+        this.transitionColor();
+
+        const isMobile = window.innerWidth < 768;
+
+        const gradient = ctx.createRadialGradient(
+          this.x,
+          this.y,
+          0,
+          this.x,
+          this.y,
+          isMobile ? canvas.width * 1.2 : canvas.width / 2,
+        );
+        const colorString = `rgb(${Math.round(this.color.r)}, ${Math.round(this.color.g)}, ${Math.round(this.color.b)})`;
+        gradient.addColorStop(0, colorString);
+        gradient.addColorStop(1, "transparent");
+
+        ctx.filter = "blur(30px)"; // Apply Gaussian blur
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.filter = "none"; // Reset the filter for the next drawing
+      }
+
+      transitionColor() {
+        this.color.r +=
+          (this.targetColor.r - this.color.r) * this.colorChangeSpeed;
+        this.color.g +=
+          (this.targetColor.g - this.color.g) * this.colorChangeSpeed;
+        this.color.b +=
+          (this.targetColor.b - this.color.b) * this.colorChangeSpeed;
+      }
+
+      changeTargetColor() {
+        this.targetColor = this.randomColor();
+      }
+    }
+
+    for (let i = 0; i < pointCount; i++) {
+      points.push(new Point());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      points.forEach((point) => {
+        point.move();
+        point.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    setInterval(() => {
+      points.forEach((point) => point.changeTargetColor());
+    }, 10000);
+
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+    };
+  }, [canvasRef, pointCount, colors]);
+
+  return (
+    <>
+      <audio ref={audioRef} src="/audio/blue.mp3" />
+
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "fixed",
+          inset: "0",
+          zIndex: "-1",
+          pointerEvents: "none",
+          filter: "blur(30px)",
+          display: "block",
+        }}
+      ></canvas>
+    </>
+  );
+}

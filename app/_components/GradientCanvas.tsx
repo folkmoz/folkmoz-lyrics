@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 export default function GradientCanvas({
   setPoints,
 }: {
-  setPoints: React.Dispatch<React.SetStateAction<void>>;
+  setPoints: React.Dispatch<React.SetStateAction<any>>;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const colors = useMemo(() => {
     return [
@@ -81,6 +80,8 @@ export default function GradientCanvas({
       }
 
       draw() {
+        if (!ctx) return;
+
         this.transitionColor();
 
         const isMobile = window.innerWidth < 768;
@@ -122,6 +123,7 @@ export default function GradientCanvas({
     }
 
     function animate() {
+      if (!ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       points.forEach((point) => {
         point.move();
@@ -136,7 +138,7 @@ export default function GradientCanvas({
       points.forEach((point) => point.changeTargetColor());
     }, 10000);
 
-    setPoints(points);
+    setPoints(points as any);
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);

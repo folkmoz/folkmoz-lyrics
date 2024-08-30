@@ -10,7 +10,7 @@ export default function Home() {
   const lyrics = LYRICS.blue;
   const [lyricIndex, setLyricIndex] = useState(0);
   const [isPlayMusic, setPlayMusic] = useState(false);
-  const [points, setPoints] = useState([]);
+  const [points, setPoints] = useState<any[]>([]);
   const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {

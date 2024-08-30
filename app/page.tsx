@@ -66,7 +66,10 @@ export default function Home() {
         {isPlayMusic && (
           <div className="lyric-container">
             {lyrics[lyricIndex].lines.map((line, lineIndex) => (
-              <div key={lineIndex} className="flex gap-6 justify-center">
+              <div
+                key={lineIndex}
+                className="flex gap-3 md:gap-6 justify-center"
+              >
                 {line.map((wordObj, wordIndex) => (
                   <BlurIn
                     key={`${lyricIndex}-${lineIndex}-${wordIndex}`}

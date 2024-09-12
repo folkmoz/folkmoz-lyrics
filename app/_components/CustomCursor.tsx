@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import {cn} from "@/lib/utils";
 
-export default function CustomCursor() {
+export default function CustomCursor({
+    isClicked,
+                                     }: {
+    isClicked: boolean;
+}) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -33,12 +38,14 @@ export default function CustomCursor() {
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseout", onMouseLeave);
     };
-  }, [ref]);
+  }, []);
 
   return (
     <div
       ref={ref}
-      className="fixed top-0 left-0 z-50 size-[150px] border border-white rounded-full pointer-events-none opacity-0 grid place-items-center transition-opacity"
+      className={cn("fixed top-0 opacity-0 left-0 z-50 size-[150px] border border-white rounded-full pointer-events-none grid place-items-center transition-opacity", {
+        "hidden": isClicked,
+      })}
     >
       <div className="flex items-center ">
         <svg

@@ -147,7 +147,7 @@ const blue = [
     duration: 1500,
   },
   {
-    lines: [[{ word: "forever", delay: 0.3, duration: 0.8 }]],
+    lines: [[{ word: "FOREVER", delay: 0.3, duration: 0.8 }]],
     duration: 2700,
   },
   {

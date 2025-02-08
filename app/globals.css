@@ -83,7 +83,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-size: clamp(1.5rem, 7vw, 12rem);
+        font-size: clamp(2rem, 7vw, 12rem);
         letter-spacing: 0.05em;
         pointer-events: none;
     }
